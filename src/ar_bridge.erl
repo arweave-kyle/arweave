@@ -248,14 +248,13 @@ add_processed(X, Y, _Procd) ->
 % get_id(block, {_, #block { indep_hash = Hash}, _}) -> Hash.
 
 %% @doc Send an internal message externally
-send_to_external(S = #state {external_peers = OrderedPeers}, {add_tx, TX}) ->
-	Peers = [Y||{_,Y} <- lists:sort([ {rand:uniform(), N} || N <- OrderedPeers])],
+send_to_external(S = #state {external_peers = ExternalPeers}, {add_tx, TX}) ->
 	spawn(
 		fun() ->
 			ar:report(
 				[
 					{sending_tx_to_external_peers, ar_util:encode(TX#tx.id)},
-					{peers, length(Peers)}
+					{peers, length(ExternalPeers)}
 				]
 			),
 			lists:foldl(
@@ -268,7 +267,7 @@ send_to_external(S = #state {external_peers = OrderedPeers}, {add_tx, TX}) ->
 					end
 				end,
 				0,
-				Peers
+				disorder(ExternalPeers)
 			)
 		end
 	),
@@ -305,6 +304,9 @@ send_block_to_external(ExternalPeers, BridgePort, B, OriginPeer, Recall) ->
 				send_block_to_external_parallel(ExternalPeers, BridgePort, B, RecallB, Key, Nonce)
 		end
 	end).
+
+disorder(List) ->
+	[Item || {_, Item} <- lists:sort([{rand:uniform(), Item} || Item <- List])].
 
 %% @doc Send the new block to the peers by first sending it in parallel to the
 %% best/first peers and then continuing sequentially with the rest of the peers
