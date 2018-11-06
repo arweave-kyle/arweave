@@ -76,38 +76,7 @@ generate_gephi_csv() ->
 get_nodes_version() ->
     get_nodes_version(get_live_nodes()).
 
-get_nodes_version(Peers) ->
-    Mapper = fun (Peer) ->
-        {Peer, get_version(Peer)}
-    end,
-    CountByVersion = maps:map(
-        fun (_, PeersByVersion) -> length(PeersByVersion) end,
-        group_by_version(ar_util:pmap(Mapper, Peers))
-    ),
-    lists:keysort(1, maps:to_list(CountByVersion)).
-
-group_by_version(PeersWithVersion) ->
-    Grouper = fun ({_, Version}) -> Version end,
-    group_by(PeersWithVersion, Grouper).
-
-get_version(Peer) ->
-    case ar_http_iface:get_info(Peer) of
-        info_unavailable -> unavailable;
-        Info -> {proplists:get_value(version, Info), proplists:get_value(release, Info)}
-    end.
-
-group_by(List, Fun) ->
-    group_by(List, Fun, maps:new()).
-
-group_by([], _, Acc) ->
-    Acc;
-group_by([Item | List], Fun, Acc) ->
-    Key = Fun(Item),
-    NewAcc = maps:put(Key,
-                      [Item | maps:get(Key, Acc, [])],
-                      Acc),
-    group_by(List, Fun, NewAcc).
-
+%% Internal
 
 %% @doc Return a map of every peers connections.
 %% Returns a list of tuples with arity 2. The first element is the local peer,
@@ -283,3 +252,35 @@ write_gephi_csv_rows([Edge | Edges], IoDevice) ->
                                        Weight]),
     ok = file:write(IoDevice, Row),
     write_gephi_csv_rows(Edges, IoDevice).
+
+get_nodes_version(Peers) ->
+    Mapper = fun (Peer) ->
+        {Peer, get_version(Peer)}
+    end,
+    CountByVersion = maps:map(
+        fun (_, PeersByVersion) -> length(PeersByVersion) end,
+        group_by_version(ar_util:pmap(Mapper, Peers))
+    ),
+    lists:keysort(1, maps:to_list(CountByVersion)).
+
+group_by_version(PeersWithVersion) ->
+    Grouper = fun ({_, Version}) -> Version end,
+    group_by(PeersWithVersion, Grouper).
+
+get_version(Peer) ->
+    case ar_http_iface:get_info(Peer) of
+        info_unavailable -> unavailable;
+        Info -> {proplists:get_value(version, Info), proplists:get_value(release, Info)}
+    end.
+
+group_by(List, Fun) ->
+    group_by(List, Fun, maps:new()).
+
+group_by([], _, Acc) ->
+    Acc;
+group_by([Item | List], Fun, Acc) ->
+    Key = Fun(Item),
+    NewAcc = maps:put(Key,
+                      [Item | maps:get(Key, Acc, [])],
+                      Acc),
+    group_by(List, Fun, NewAcc).
