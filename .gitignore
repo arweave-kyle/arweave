@@ -2,6 +2,7 @@
 *.log
 *.dat
 *.json
+!docs/*.json
 .arweave.plt
 testlog
 
