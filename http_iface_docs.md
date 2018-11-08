@@ -3,612 +3,490 @@
 
 
 
-## GET network information
+### GET network information
 
-Retrieve the current network information from a specific node.
+Get the current network information.
 
-- **URL**
-  `/info`
-- **Method**
-  GET
+**Request**
 
-#### Example Response
+`GET /info`
 
-A JSON array containing the network information for the current node.
+**Headers**
 
-```javascript
+*None*
+
+**Parameters**
+
+*None*
+
+**Response**
+
+`GET /info`
+
+```json
 {
-  "network": "archain.BATN.4",
-  "version": "3",
-  "height": "2956",
-  "blocks": "3495",
-  "peers": "12"
-}
-```
-
-#### JavaScript Example Request
-
-```javascript
-var node = 'http://127.0.0.1:1984';
-var path = '/info';
-var url = node + path;
-var xhr = new XMLHttpRequest();
-
-xhr.open('GET', url);
-xhr.onreadystatechange = function() {
-  if(xhr.readystate == 4 && xhr.status == 200) {
-    // Do something.
-  }
-};
-xhr.send();
-```
-
-
-
-
-
-## GET full transaction via ID
-
-Retrieve a JSON transaction record via the specified ID.
-
-- **URL**
-  `/tx/[transaction_id]`
-- **Method**
-  GET
-- **URL Parameters**
-  [transaction_id] : base64url encoded ID associated with the transaction
-
-
-#### Example Response
-
-A JSON transaction record.
-
-```javascript
-{
-  "id": "VvNF3aLS28MXD_o4Lv0lF9_WcxMibFOp166qDqC1Hlw",
-  "last_tx": "bUfaJN-KKS1LRh_DlJv4ff1gmdbHP4io-J9x7cLY5is",
-  "owner": "1Q7RfP...J2x0xc",
-  "tags": [],
-  "target": "",
-  "quantity": "0",
-  "type": "data",
-  "data": "3DduMPkwLkE0LjIxM9o",
-  "reward": "1966476441",
-  "signature": "RwBICn...Rxqi54"
+  "network": "arweave.N.1",
+  "version": 3,
+  "release": 16,
+  "height": 78309,
+  "current": "o8ahQ55Omd7Fdi4UgGP82bD2-TZ66JYY33NzGyvpLL3_V3wCmsq8NJmnkJl1p_ew",
+  "blocks": 97375,
+  "peers": 64,
+  "queue_length": 0,
+  "node_state_latency": 18
 }
 ```
 
 
-#### JavaScript Example Request
+### GET peer list  
 
-```javascript
-var node = 'http://127.0.0.1:1984';
-var path = '/tx/VvNF3aLS28MXD_o4Lv0lF9_WcxMibFOp166qDqC1Hlw';
-var url = node + path;
-var xhr = new XMLHttpRequest();
+Get the list of known peers for the node. Nodes can only respond with peers they currently know about so this will not be an exhaustive list of nodes in the network.
 
-xhr.open('GET', url);
-xhr.onreadystatechange = function() {
-  if(xhr.readystate == 4 && xhr.status == 200) {
-    // Do something.
-  }
-};
-xhr.send();
+**Request**
+
+`GET /peers`
+
+**Headers**
+
+*None*
+
+**Parameters**
+
+*None*
+
+**Response**
+
+`GET /peers`
 ```
-
-
-
-
-
-## GET specific transaction fields via ID
-
-Retrieve a string of the requested field for a given transaction.
-
-- **URL**
-  `/tx/[transaction_id]/[field]`
-- **Method**
-  GET
-- **URL Parameters**
-  [transaction_id] : Base64url encoded ID associated with the transaction
-  [field] : A string containing the name of the data field being requested
-- **Fields**
-  id | last_tx | owner | target | quantity | type | data | reward | signature
-
-
-#### Example Response
-
-A string containing the requested field.
-
-```javascript
-"bUfaJN-KKS1LRh_DlJv4ff1gmdbHP4io-J9x7cLY5is"
+HTTP/1.1 200 OK
 ```
-
-
-#### JavaScript Example Request
-
-```javascript
-var node = 'http://127.0.0.1:1984';
-var path = '/tx/VvNF3aLS28MXD_o4Lv0lF9_WcxMibFOp166qDqC1Hlw/last_tx';
-var url = node + path;
-var xhr = new XMLHttpRequest();
-
-xhr.open('GET', url);
-xhr.onreadystatechange = function() {
-  if(xhr.readystate == 4 && xhr.status == 200) {
-    // Do something.
-  }
-};
-xhr.send();
-```
-
-
-
-
-
-
-## GET transaction body as HTML via ID
-
-Retrieve the data segment of the transaction body decoded from base64url encoding.
-If the transaction was an archived website then the result will be browser rendererable HTML.
-
-- **URL**
-  `/tx/[transaction_id]/data.html`
-- **Method**
-  GET
-- **URL Parameters**
-  [transaction_id] : Base64url encoded ID associated with the transaction
-
-
-#### Example Response
-
-A string containing the requested field.
-
-```javascript
-"Hello World"
-```
-
-
-#### JavaScript Example Request
-
-```javascript
-var node = 'http://127.0.0.1:1984';
-var path = '/tx/B7j_bkDICQyl_y_hBM68zS6-p8-XiFCUmEBaXRroFTM/data.html'
-var url = node + path;
-var xhr = new XMLHttpRequest();
-
-xhr.open('GET', url);
-xhr.onreadystatechange = function() {
-  if(xhr.readystate == 4 && xhr.status == 200) {
-    // Do something.
-  }
-};
-xhr.send();
-```
-
-
-
-
-
-## GET estimated transaction price
-
-Returns an estimated cost for a transaction of the given size.
-The returned amount is in winston (the smallest division of AR, 1 AR = 1000000000000 winston).
-
-- **URL**
-  `/price/[byte_size]`
-- **Method**
-  GET
-- **URL Parameters**
-  [byte_size] : The size of the transaction's data field in bytes. For financial transactions without associated data, this should be zero.
-
-
-#### Example Response
-
-A string containing the estimated cost of the transaction in Winston.
-
-```javascript
-"1896296296"
-```
-
-
-#### JavaScript Example Request
-
-```javascript
-var node = 'http://127.0.0.1:1984';
-var path = '/price/2048';
-var url = node + path;
-var xhr = new XMLHttpRequest();
-
-xhr.open('GET', url);
-xhr.onreadystatechange = function() {
-  if(xhr.readystate == 4 && xhr.status == 200) {
-    // Do something.
-  }
-};
-xhr.send();
-```
-
-
-
-
-
-
-## GET block via ID
-
-Retrieve a JSON array representing the contents of the block specified via the ID.
-
-- **URL**
-  `/block/hash/[block_id]`
-- **Method**
-  GET
-- **URL Parameters**
-  [block_id] : Base64url encoded ID associated with the block
-
-
-#### Example Response
-
-A JSON array detailing the block.
-
-```javascript
-{
-  "nonce": "c7V-8dLmmqo",
-  "previous_block": "yeCiFpWcguWtWRJnJ_XOKhQXw6xtiOHh-rAw-RjX0YE",
-  "timestamp": 1517563547,
-  "last_retarget": 1517563547,
-  "diff": 8,
-  "height": 30,
-  "hash": "-3-oyxTcYAgbbNoFyDz8hqs7KCJHI4qb4VdER9Jotbs",
-  "indep_hash": "oyxTcYAgbbNoFyDz8hqs7KCJHI4qb4VdER9Jotbs",
-  "txs": [...],
-  "hash_list": [...],
-  "wallet_list": [...],
-  "reward_addr": "unclaimed"
-}
-```
-
-
-#### JavaScript Example Request
-
-```javascript
-var node = 'http://127.0.0.1:1984';
-var path = '/block/hash/-3-oyxTcYAgbbNoFyDz8hqs7KCJHI4qb4VdER9Jotbs';
-var url = node + path;
-var xhr = new XMLHttpRequest();
-
-xhr.open('GET', url);
-xhr.onreadystatechange = function() {
-  if(xhr.readystate == 4 && xhr.status == 200) {
-    // Do something.
-  }
-};
-xhr.send();
-```
-
-
-
-
-
-
-
-## GET block via height
-
-Retrieve a JSON array representing the contents of the block specified via the block height.
-
-- **URL**
-  `/block/height/[block_height]
-- **Method**
-  GET
-- **URL Parameters**
-  [block_height] : The height at which the block is being requested for
-
-
-#### Example Response
-
-A JSON array detailing the block.
-
-```javascript
-{
-  "nonce": "c7V-8dLmmqo",
-  "previous_block": "yeCiFpWcguWtWRJnJ_XOKhQXw6xtiOHh-rAw-RjX0YE",
-  "timestamp": 1517563547,
-  "last_retarget": 1517563547,
-  "diff": 8,
-  "height": 30,
-  "hash": "-3-oyxTcYAgbbNoFyDz8hqs7KCJHI4qb4VdER9Jotbs",
-  "indep_hash": "oyxTcYAgbbNoFyDz8hqs7KCJHI4qb4VdER9Jotbs",
-  "txs": [...],
-  "hash_list": [...],
-  "wallet_list": [...],
-  "reward_addr": "unclaimed"
-}
-```
-
-
-#### JavaScript Example Request
-
-```javascript
-var node = 'http://127.0.0.1:1984';
-var path = '/block/height/1101';
-var url = node + path;
-var xhr = new XMLHttpRequest();
-
-xhr.open('GET', url);
-xhr.onreadystatechange = function() {
-  if(xhr.readystate == 4 && xhr.status == 200) {
-    // Do something.
-  }
-};
-xhr.send();
-```
-
-
-
-
-
-
-
-
-## GET current block
-
-Retrieve a JSON array representing the contents of the current block, the network head.
-
-- **URL**
-  `/current_block`
-- **Method**
-  GET
-
-
-#### Example Response
-
-A JSON array detailing the block.
-
-```javascript
-{
-  "nonce": "rihlezm7XAc",
-  "previous_block": "pc-0MvV6lQOWt0O2L3VcSheOfIdymntOBVcloERVbQQ",
-  "timestamp": 1517564276,
-  "last_retarget": 1517564044,
-  "diff": 24,
-  "height": 166,
-  "hash": "mGe34a3DcT8HLE0BfaME38XUelENSjPQA-vcYJG6PGs",
-  "indep_hash": "ntoWN8DMFSuxPsdF8CelZqP03Gr4GahMBXX8ZkyPA3U",
-  "txs": [...],
-  "hash_list": [...],
-  "wallet_list": [...],
-  "reward_addr": "unclaimed"
-}
-```
-
-
-#### JavaScript Example Request
-
-```javascript
-var node = 'http://127.0.0.1:1984';
-var path = '/current_block';
-var url = node + path;
-var xhr = new XMLHttpRequest();
-
-xhr.open('GET', url);
-xhr.onreadystatechange = function() {
-  if(xhr.readystate == 4 && xhr.status == 200) {
-    // Do something.
-  }
-};
-xhr.send();
-```
-
-
-
-
-
-
-
-## GET wallet balance via address
-
-Retrieve the balance of the wallet specified via the address.
-The returned amount is in winston (the smallest division of AR, 1 AR = 1000000000000 winston).
-
-- **URL**
-  `/wallet/[wallet_address]/balance`
-- **Method**
-  GET
-- **URL Parameters**
-  [wallet_address] : A base64url encoded SHA256 hash of the raw RSA modulus.
-
-
-#### Example Response
-
-A string containing the balance of the wallet.
-
-```javascript
-"1249611338095239"
-```
-
-
-#### JavaScript Example Request
-
-```javascript
-var node = 'http://127.0.0.1:1984';
-var path = '/wallet/VukPk7P3qXAS2Q76ejTwC6Y_U_bMl_z6mgLvgSUJIzE/balance';
-var url = node + path;
-var xhr = new XMLHttpRequest();
-
-xhr.open('GET', url);
-xhr.onreadystatechange = function() {
-  if(xhr.readystate == 4 && xhr.status == 200) {
-    // Do something.
-  }
-};
-xhr.send();
-```
-
-
-
-
-
-
-
-
-## GET last transaction via address
-
-Retrieve the ID of the last transaction made by the given address.
-
-- **URL**
-  `/wallet/[wallet_address]/last_tx`
-- **Method**
-  GET
-- **URL Parameters**
-  [wallet_address] : A base64url encoded SHA256 hash of the RSA modulus.
-
-
-#### Example Response
-
-A string containing the ID of the last transaction made by the given address.
-
-```javascript
-"bUfaJN-KKS1LRh_DlJv4ff1gmdbHP4io-J9x7cLY5is"
-```
-
-
-#### JavaScript Example Request
-
-```javascript
-var node = 'http://127.0.0.1:1984';
-var path = '/wallet/VukPk7P3qXAS2Q76ejTwC6Y_U_bMl_z6mgLvgSUJIzE/last_tx';
-var url = node + path;
-var xhr = new XMLHttpRequest();
-
-xhr.open('GET', url);
-xhr.onreadystatechange = function() {
-  if(xhr.readystate == 4 && xhr.status == 200) {
-    // Do something.
-  }
-};
-xhr.send();
-```
-
-
-
-
-
-
-
-
-## GET nodes peer list  
-
-Retrieve the list of peers held by the contacted node.
-
-- **URL**
-  `/peers`
-- **Method**
-  GET
-
-
-#### Example Response
-
-A list containing the IP addresses of all of the nodes peers.
-
-```javascript
+```json
 [
-  "127.0.0.1:1985",
-  "127.0.0.1.:1986"
+  "127.0.0.1:1984",
+  "127.0.0.1.:1984"
 ]
 ```
 
 
-#### JavaScript Example Request
+### GET transaction by ID
 
-```javascript
-var node = 'http://127.0.0.1:1984';
-var path = '/peers';
-var url = node + path;
-var xhr = new XMLHttpRequest();
+Get a JSON transaction record by its ID.
 
-xhr.open('GET', url);
-xhr.onreadystatechange = function() {
-  if(xhr.readystate == 4 && xhr.status == 200) {
-    // Do something.
-  }
-};
-xhr.send();
+**Request**
+
+`GET /tx/{transaction_id}`
+
+**Headers**
+
+*None*
+
+**Parameters**
+
+Name | Required | Value
+------------ | ------------- | -------------
+`transaction_id` | Yes | The transaction ID
+
+
+**Response**
+
+An example JSON object for a data transaction
+
+`GET /tx/BNttzDav3jHVnNiV7nYbQv-GY0HQ-4XXsdkE5K9ylHQ`
+
+```
+HTTP/1.1 200 OK
 ```
 
-
-
-
-
-
-
-
-## POST transaction to network
-
-Post a transaction to the network.
-
-- **URL**
-  `/tx`
-
-- **Method**
-  POST
-
-
-#### Data Parameter (Post body)
-
-```javascript
+```json
 {
-    "id": "",     // base64url encoded random string of 32-bytes
-    "last_tx": "",    // base64url encoded ID of last transaction made by address
-    "owner": "",    // base64url encoded modulus of wallet making transaction
-    "target": "",   // base64url encoded SHA256 hash of recipients modulus
-    "quantity": "",   // string representing the amount of sent AR in winston
-    "type": "",     // string stating type of transaction 'data' or 'transfer'
-    "data": "",     // base64url encoded data being archived in transaction
-    "reward": "",   // string representing the mining reward AR in winston
-    "signature": ""   // base64url encoded signature of transaction
+  "id": "BNttzDav3jHVnNiV7nYbQv-GY0HQ-4XXsdkE5K9ylHQ",
+  "last_tx": "jUcuEDZQy2fC6T3fHnGfYsw0D0Zl4NfuaXfwBOLiQtA",
+  "owner": "posmE...psEok",
+  "tags": [],
+  "target": "",
+  "quantity": "0",
+  "data": "PGh0b...RtbD4",
+  "reward": "124145681682",
+  "signature": "HZRG_...jRGB-M"
+}
+```
+An example JSON object for a transfer between wallets
+
+`GET /tx/UEVFNJVXSu7GodYbZoldRHGi_tjzNtNcYjeSkxKCpiE`
+
+```
+HTTP/1.1 200 OK
+```
+```json
+{
+  "id": "UEVFNJVXSu7GodYbZoldRHGi_tjzNtNcYjeSkxKCpiE",
+  "last_tx": "knQ5gf4Z_3i-NQ6_jFT2a9zShUOHh4lDZoAUzsWMxMQ",
+  "owner": "1nPKv...LjJMc",
+  "tags": [],
+  "target": "WxLW1MWiSWcuwxmvzokahENCbWurzvwcsukFTGrqwdw",
+  "quantity": "46598403314697200",
+  "data": "",
+  "reward": "321179212",
+  "signature": "OYIJU...j9Mxc"
 }
 ```
 
-#### JavaScript Example Request
+An example JSON object for a transfer between wallets with a piece of data attached
 
-```javascript
-var node = 'http://127.0.0.1:1984';
-var path = '/tx';
-var url = node + path;
-var xhr = new XMLHttpRequest();
-var post =
-    {
-      "id": "VvNF3aLS28MXD_o4Lv0lF9_WcxMibFOp166qDqC1Hlw",
-      "last_tx": "bUfaJN-KKS1LRh_DlJv4ff1gmdbHP4io-J9x7cLY5is",
-      "owner": "1Q7RfP...J2x0xc",
-      "tags": [],
-      "target": "",
-      "quantity": "0",
-      "type": "data",
-      "data": "3DduMPkwLkE0LjIxM9o",
-      "reward": "1966476441",
-      "signature": "RwBICn...Rxqi54"
-  };
+`GET /tx/3pXpj43Tk8QzDAoERjHE3ED7oEKLKephjnVakvkiHF8`
+```
+HTTP/1.1 200 OK
+```
 
-xhr.open('POST', url);
-xhr.onreadystatechange = function() {
-  if(xhr.readystate == 4 && xhr.status == 200) {
-    // Do something.
-  }
-};
-xhr.send(post);
+```json
+{
+  "id": "3pXpj43Tk8QzDAoERjHE3ED7oEKLKephjnVakvkiHF8",
+  "last_tx": "NpeIbi93igKhE5lKUMhH5dFmyEsNGC0fb2Qysggd-kM",
+  "owner": "posmE...psEok",
+  "tags": [],
+  "target": "pEbU_SLfRzEseum0_hMB1Ie-hqvpeHWypRhZiPoioDI",
+  "quantity": "10000000000",
+  "data": "VGVzdA",
+  "reward": "321579659",
+  "signature": "fjL0N...f2UMk"
+}
+```
+
+A pending transaction
+
+`GET /tx/3pXpj43Tk8QzDAoERjHE3ED7oEKLKephjnVakvkiHF8`
+```
+HTTP/1.1 202 Accepted
+```
+
+```json
+pending
+```
+
+
+### GET transaction field
+
+Get a single field from a transaction.
+
+**Request**
+
+`GET /tx/{transaction_id}/{field}`
+
+**Headers**
+
+*None*
+
+**Parameters**
+
+Name | Required | Value
+------------ | ------------- | -------------
+`transaction_id` | Yes | The transaction ID
+`field` | Yes | The field to return, acceptable values: `id,last_tx,owner,tags,target,quantity,data,reward,signature`
+
+
+**Response**
+
+`GET /tx/BNttzDav3jHVnNiV7nYbQv-GY0HQ-4XXsdkE5K9ylHQ/last_tx`
+
+```http
+HTTP/1.1 200 OK
+```
+
+```
+jUcuEDZQy2fC6T3fHnGfYsw0D0Zl4NfuaXfwBOLiQtA
+```
+
+### GET transaction data
+
+Retrieve the data segment of the transaction body in its original format. If the transaction was an archived webpage then the result will be browser rendererable HTML, if the original data was a binary (image, pdf, etc) then the response will be in that format.
+
+
+**Request**
+
+`/tx/{transaction_id}/data.{extension}`
+
+**Headers**
+
+*None*
+  
+**Parameters**
+
+Name | Required | Value
+------------ | ------------- | -------------
+`transaction_id` | Yes | The transaction ID
+`extension` | Yes | For HTML/webpages use `data.html` to serve browser renderable HTML with `Content-Type: text/html` header. If a binary transaction is posted with a `Content-Type` tag, then that `Content-Type` value will be used to set the `Content-Type` header on the response.
+
+
+**Response**
+
+`tx/BNttzDav3jHVnNiV7nYbQv-GY0HQ-4XXsdkE5K9ylHQ/data.html`
+
+```http
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: *
+Content-Length: 1033478
+Content-Type: text/html
+```
+
+```html
+<html lang="en-GB" class="b-pw-1280 no-touch orb-js id-svg bbcdotcom ads-enabled bbcdotcom-init bbcdotcom-responsive bbcdotcom-async bbcdotcom-ads-enabled orb-more-loaded  bbcdotcom-group-5" id="responsive-news">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1">
+...
 ```
 
 
 
-> Please note that in the JSON transaction records all winston value fields (quantity and reward) are strings. This is to allow for interoperability between environments that do not accommodate arbitrary-precision arithmetic. JavaScript for instance stores all numbers as double precision floating point values and as such cannot natively express the integer number of winston. Providing these values as strings allows them to be directly loaded into most 'bignum' libraries.
+### GET transaction price
+
+Returns an estimated cost for a transaction of the given size, the returned amount is in winston (the smallest division of AR, 1 AR = 1000000000000 winston).
+
+- For data transactions `/price/{number_of_bytes}` should be used.
+- For transfers to other wallets `/price/{number_of_bytes}/{target_address}` should be used.
+- For transfers to other wallets with data attached `/price/{number_of_bytes}/{target_address}` should be used.
+
+The first transfer to a new wallet will incur an additional fee of 0.25 AR, this is to disincentivise the creation and usage of superfluous wallets.
+
+
+**Request**
+
+`/price/{number_of_bytes}/{target_address}`
+
+**Headers**
+
+*None*
+  
+**Parameters**
+
+Name | Required | Value
+------------ | ------------- | -------------
+`number_of_bytes` | Yes | The number of bytes to be used in the `data` field in a transaction.
+`target_address` | No | The target wallet address, if required.
+
+
+**Response**
+
+A string containing the estimated cost of the transaction in Winston.
+
+```
+1896296296
+```
 
 
 
+### GET last transaction from wallet address
+
+Get the ID of the last transaction made from the given wallet address. You'll need this endpoint to build a new transaction.
 
 
-# Contact
+**Request**
+
+`GET /wallet/{wallet_address}/last_tx`
+
+**Headers**
+
+*None*
+  
+**Parameters**
+
+Name | Required | Value
+------------ | ------------- | -------------
+`wallet_address` | Yes | The wallet address
+
+
+**Response**
+
+`GET wallet/WxLW1MWiSWcuwxmvzokahENCbWurzvwcsukFTGrqwdw/last_tx`
+
+```json
+-YW9sdrCIDyrdNAKqDjQjChYFQrEbRqwl-2feATE770
+```
+
+
+### GET wallet balance from address
+
+Get the balance for the given wallet address.
+The returned amount is in winston (the smallest division of AR, 1 AR = 1000000000000 winston).
+
+**Request**
+
+`GET /wallet/{wallet_address}/balance`
+
+**Headers**
+
+*None*
+  
+**Parameters**
+
+Name | Required | Value
+------------ | ------------- | -------------
+`wallet_address` | Yes | The wallet address
+
+
+**Response**
+
+`GET wallet/WxLW1MWiSWcuwxmvzokahENCbWurzvwcsukFTGrqwdw/balance`
+
+```json
+22505687150866594
+```
+
+
+### GET block by ID
+
+Get a block by its ID (indep_hash).
+
+**Request**
+
+`GET /block/hash/{block_id}`
+
+**Headers**
+
+Name | Required | Value
+------------ | ------------- | -------------
+`X-Block-Format` | No | Acceptable values: `1`,`2`. The V1 block format contained the full `hash_list` and `wallet_list` as arrays of hashes. The V2 format has `hash_list` removed entirely and `wallet_list` is simply a hash of the wallet_list for the given block. These lists can now be found on the X and Y endpoints.
+
+**For backwards compaiability the default format is V1, but we *strongly* recommend setting this header and using the V2 format as this will be the default in future releases.**
+
+**Parameters**
+
+Name | Required | Value
+------------ | ------------- | -------------
+`block_id` | Yes | Block ID (indep_hash)
+
+**Response**
+
+```json
+{
+    "nonce": "AQAAAQABAAEBAQAAAAAAAQEAAQABAAABAAABAQEBAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "previous_block": "fVOpb6C3yjC3-XaBS0865fS_wH3IbIX08ZeZHB7HoHh12X8GD-X8jMJFzU0r9BoE",
+    "timestamp": 1541689343,
+    "last_retarget": 1541688945,
+    "diff": 34,
+    "height": 78415,
+    "hash": "AAAAAAc1al2KXr-MdSn2WG_Aqal613yxKlH2uCLpV5CF5H3RzI7uDwjn50E64lpm",
+    "indep_hash": "hN-K2p7XmH3J6JdKONct3lHX-81NPcv0_0u02k1Ha16kVo2na6Czx1rsQiXt9vcg",
+    "txs": [],
+    "wallet_list": "ESzKam5rmvmlI1K-L7U5BKO50MtNt52INExzZBAvWA0",
+    "reward_addr": "bfgWCyS7pYS4fXUDYblFxBLRugDiGMSR0_kP2vMz6oE",
+    "tags": [],
+    "reward_pool": 4925,
+    "weave_size": 160604943,
+    "block_size": 0
+}
+```
+
+### GET current block
+
+Retrieve a JSON array representing the contents of the current block, the network head.
+
+**Request**
+
+`GET /block/current`
+
+**Headers**
+
+Name | Required | Value
+------------ | ------------- | -------------
+`X-Block-Format` | No | Acceptable values: `1`,`2`. The V1 block format contained the full `hash_list` and `wallet_list` as arrays of hashes. The V2 format has `hash_list` removed entirely and `wallet_list` is simply a hash of the wallet_list for the given block. These lists can now be found on the X and Y endpoints.
+
+**For backwards compaiability the default format is V1, but we *strongly* recommend setting this header and using the V2 format as this will be the default in future releases.**
+
+**Parameters**
+
+Name | Required | Value
+------------ | ------------- | -------------
+`block_id` | Yes | Block ID (indep_hash)
+
+**Response**
+
+```json
+{
+    "nonce": "AQAAAQABAAEBAQAAAAAAAQEAAQABAAABAAABAQEBAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "previous_block": "fVOpb6C3yjC3-XaBS0865fS_wH3IbIX08ZeZHB7HoHh12X8GD-X8jMJFzU0r9BoE",
+    "timestamp": 1541689343,
+    "last_retarget": 1541688945,
+    "diff": 34,
+    "height": 78415,
+    "hash": "AAAAAAc1al2KXr-MdSn2WG_Aqal613yxKlH2uCLpV5CF5H3RzI7uDwjn50E64lpm",
+    "indep_hash": "hN-K2p7XmH3J6JdKONct3lHX-81NPcv0_0u02k1Ha16kVo2na6Czx1rsQiXt9vcg",
+    "txs": [],
+    "wallet_list": "ESzKam5rmvmlI1K-L7U5BKO50MtNt52INExzZBAvWA0",
+    "reward_addr": "bfgWCyS7pYS4fXUDYblFxBLRugDiGMSR0_kP2vMz6oE",
+    "tags": [],
+    "reward_pool": 4925,
+    "weave_size": 160604943,
+    "block_size": 0
+}
+```
+
+
+### POST transaction to network
+
+Submit a new transaction to the network.
+
+**Request**
+
+`POST /tx`
+
+**Headers**
+
+*None*
+
+**Parameters**
+
+*None*
+
+**Body**
+
+Name | Required | Value
+------------ | ------------- | -------------
+`id` | Yes | The transaction ID, this is a SHA-256 hash of the transaction signature which is then base64 URL encoded.
+`last_tx` | Yes | The last transaction id from the sending wallet, see X
+`owner` | Yes | The full RSA modulus value from the sending wallet base64 URL encoded. The modulus is the `n` value from the JWK file.
+`target` | Yes | The recipient address (if sending AR to another wallet). Use an empty string (`""`) for data transactions.
+`quantity` | Yes | The amount in winston to transfer to the `target` wallet. Use an empty string (`""`) for data transactions.
+`data` | Yes | The data to be uploaded, base64 URL encoded.
+`reward` | Yes | The transaction fee which can be calulated using X
+`signature` | Yes | The transaction signature, base64 URL encoded.
+
+
+> **Note** `quantity` and `reward` values are always winston strings. This is to allow for interoperability between environments that do not accommodate arbitrary-precision arithmetic. JavaScript for instance stores all numbers as double precision floating point values and as such cannot natively express the integer number of winston. Providing these values as strings allows them to be directly loaded into most 'bignum' libraries.
+
+**Request**
+
+`POST /tx`
+
+```json
+{
+  "id": "BNttzDav3jHVnNiV7nYbQv-GY0HQ-4XXsdkE5K9ylHQ",
+  "last_tx": "jUcuEDZQy2fC6T3fHnGfYsw0D0Zl4NfuaXfwBOLiQtA",
+  "owner": "posmE...psEok",
+  "tags": [],
+  "target": "",
+  "quantity": "0",
+  "data": "PGh0b...RtbD4",
+  "reward": "124145681682",
+  "signature": "HZRG_...jRGB-M"
+}
+```
+
+**Response**
+
+Accepted
+```http
+HTTP/1.1 200 OK
+```
+
+Invalid transaction
+```http
+HTTP/1.1 400 Bad Request
+```
+
+# Help
 
 If you have questions or comments on the Arweave HTTP interface you can get in touch by
-finding us on [Twitter](https://twitter.com/ArweaveTeam/), [Reddit](https://www.reddit.com/r/arweave), [Discord](https://discord.gg/2ZpV8nM) or by emailing us at team@arweave.org.
+finding us on [Twitter](https://twitter.com/ArweaveTeam), [Reddit](https://www.reddit.com/r/arweave), [Discord](https://discord.gg/2ZpV8nM) or by emailing us at team@arweave.org.
 
 # License
 The Arweave project is released under GNU General Public License v2.0.
