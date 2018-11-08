@@ -108,8 +108,8 @@ handle(SPid, {process_new_block, Peer, Height, NewB, Recall}) ->
 	HashList = maps:get(hash_list, StateIn),
 	{NewGS, _} = ar_gossip:send(GS, {new_block, Peer, Height, NewB, Recall}),
 	ar_node_state:update(SPid, [{gossip, NewGS}]),
-	{RecallIndepHash, Key, Nonce} = Recall,
-	RecallB = ar_block:get_recall_block(Peer, RecallIndepHash, NewB, Key, Nonce),
+	{RecallIndepHash, RecallBHL, Key, Nonce} = Recall,
+	RecallB = ar_block:get_recall_block(Peer, RecallIndepHash, NewB, Key, Nonce, RecallBHL),
 	case process_new_block(StateIn, NewGS, NewB, RecallB, Peer, HashList) of
 		{ok, StateOut} ->
 			ar_node_state:update(SPid, StateOut);
@@ -199,8 +199,8 @@ handle(_SPid, Msg) ->
 handle_gossip(SPid, {NewGS, {new_block, Peer, _Height, NewB, Recall}}) ->
 	{ok, StateIn} = ar_node_state:all(SPid),
 	HashList = maps:get(hash_list, StateIn),
-	{RecallIndepHash, Key, Nonce} = Recall,
-	RecallB = ar_block:get_recall_block(Peer, RecallIndepHash, NewB, Key, Nonce),
+	{RecallIndepHash, RecallBHL, Key, Nonce} = Recall,
+	RecallB = ar_block:get_recall_block(Peer, RecallIndepHash, NewB, Key, Nonce, RecallBHL),
 	case process_new_block(StateIn, NewGS, NewB, RecallB, Peer, HashList) of
 		{ok, StateOut} ->
 			ar_node_state:update(SPid, StateOut);
@@ -567,7 +567,7 @@ integrate_block_from_miner(StateIn, MinedTXs, Diff, Nonce, Timestamp) ->
 				end,
 				PotentialTXs
 			),
-			Recall = {RecallB#block.indep_hash, <<>>, <<>>},
+			Recall = {RecallB#block.indep_hash, RecallB#block.hash_list, <<>>, <<>>},
 			{NewGS, _} =
 				ar_gossip:send(
 					GS,

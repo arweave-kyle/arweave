@@ -70,7 +70,7 @@ set_remote_peers(PID, Peers) ->
 	PID ! {set_peers, Peers}.
 
 %% @doc Notify the bridge of a new external block.
-add_block(PID, OriginPeer, Block, Recall = {_RecallIndepHash, _Key, _Nonce}) ->
+add_block(PID, OriginPeer, Block, Recall = {_RecallIndepHash, _BHL, _Key, _Nonce}) ->
 	PID ! {add_block, OriginPeer, Block, Recall}.
 
 %% @doc Notify the bridge of a new external block.
@@ -294,8 +294,8 @@ send_to_external(S, {NewGS, Msg}) ->
 %% @doc Send a block to external peers in a spawned process.
 send_block_to_external(ExternalPeers, BridgePort, B, OriginPeer, Recall) ->
 	spawn(fun() ->
-		{RecallIndepHash, Key, Nonce} = Recall,
-		case ar_block:get_recall_block(OriginPeer, RecallIndepHash, B, Key, Nonce) of
+		{RecallIndepHash, BHL, Key, Nonce} = Recall,
+		case ar_block:get_recall_block(OriginPeer, RecallIndepHash, B, Key, Nonce, BHL) of
 			unavailable -> ok;
 			RecallB ->
 				ar:report(

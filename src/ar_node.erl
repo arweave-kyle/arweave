@@ -596,14 +596,14 @@ add_block(Conn, NewB, RecallB, Height) ->
 		Height
 	).
 add_block(GS, Peer, NewB, RecallB, Height) when is_record(GS, gs_state) ->
-	Recall = {RecallB#block.indep_hash, <<>>, <<>>},
+	Recall = {RecallB#block.indep_hash, RecallB#block.hash_list, <<>>, <<>>},
 	{NewGS, _} =
 		ar_gossip:send(
 			GS, {new_block, Peer, Height, NewB, Recall}
 		),
 	NewGS;
 add_block(Node, Peer, NewB, RecallB, Height) when is_pid(Node) ->
-	Recall = {RecallB#block.indep_hash, <<>>, <<>>},
+	Recall = {RecallB#block.indep_hash, RecallB#block.hash_list, <<>>, <<>>},
 	Node ! {new_block, Peer, Height, NewB, Recall},
 	ok;
 add_block(Host, Peer, NewB, RecallB, _Height) ->

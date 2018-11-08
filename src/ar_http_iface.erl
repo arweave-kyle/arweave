@@ -1313,7 +1313,8 @@ post_block(post_block, {ReqStruct, BShadow, OrigPeer}) ->
 							{sending_external_block_to_bridge, ar_util:encode(BShadow#block.indep_hash)}
 						]
 					),
-					ar_bridge:add_block(whereis(http_bridge_node), OrigPeer, B, {RecallIndepHash, Key, Nonce});
+					Recall = {RecallIndepHash, CurrentB#block.hash_list, Key, Nonce},
+					ar_bridge:add_block(whereis(http_bridge_node), OrigPeer, B, Recall);
 				_ ->
 					ok
 			end

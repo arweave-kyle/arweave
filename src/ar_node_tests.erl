@@ -180,7 +180,7 @@ add_bogus_block_test() ->
 	Bs = [B2|_] = ar_weave:add(B1, [TX2]),
 	ar_storage:write_block(B2),
 	RecallB = ar_node_utils:find_recall_block(Bs),
-	Recall = {RecallB#block.indep_hash, <<>>, <<>>},
+	Recall = {RecallB#block.indep_hash, RecallB#block.hash_list, <<>>, <<>>},
 	ar_gossip:send(GS0,
 		{
 			new_block,
@@ -220,9 +220,10 @@ add_bogus_block_nonce_test() ->
 	B2 = ar_weave:add(B1, [TX2]),
 	ar_storage:write_block(hd(B2)),
 	RecallB = ar_node_utils:find_recall_block(B2),
-	Recall = {RecallB#block.indep_hash, <<>>, <<>>},
+	Recall = {RecallB#block.indep_hash, RecallB#block.hash_list, <<>>, <<>>},
 	ar_gossip:send(GS0,
-		{new_block,
+		{
+			new_block,
 			self(),
 			(hd(B2))#block.height,
 			(hd(B2))#block { nonce = <<"INCORRECT">> },
@@ -259,9 +260,10 @@ add_bogus_hash_list_test() ->
 	B2 = ar_weave:add(B1, [TX2]),
 	ar_storage:write_block(hd(B2)),
 	RecallB = ar_node_utils:find_recall_block(B2),
-	Recall = {RecallB#block.indep_hash, <<>>, <<>>},
+	Recall = {RecallB#block.indep_hash, RecallB#block.hash_list, <<>>, <<>>},
 	ar_gossip:send(GS0,
-		{new_block,
+		{
+			new_block,
 			self(),
 			(hd(B2))#block.height,
 			(hd(B2))#block {
